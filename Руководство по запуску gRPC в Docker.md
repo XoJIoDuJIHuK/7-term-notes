@@ -1,20 +1,15 @@
 1. Установить Docker на компьютер
     1. [Для Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
     2. [Для Ubuntu](https://docs.docker.com/engine/install/)
-3. Создать на компьютере папку проекта со следующими файлами:
+2. Создать на компьютере папку проекта со следующими файлами:
 ```
-client/
-└── main.py
+main.py
 server.go
 service.proto
-Dockerfile
+client.Dockerfile
+server.Dockerfile
 ```
-4. Создать виртуальное окружение Python (все последующие команды выполнять в папке проекта)
-    1. Для Windows: `python -m venv .venv && source` ДОПИСАТЬ
-    2. Для Ubuntu: `python3.12 -m venv .venv && source .venv/bin/activate`
-5. Установить необходимые Python пакеты: pip install grpcio grpcio-tools
-6. Создать файлы-заглушки для Python клиента: python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. --pyi_out=. service.proto
-7. Поместить в файл server.go следующий текст:
+3. Поместить в файл server.go следующий текст:
 ```go
 package main  
   
@@ -87,7 +82,7 @@ func main() {
     }  
 }
 ```
-9. Поместить в файл service.proto следующий текст:
+4. Поместить в файл service.proto следующий текст:
 ```proto
 syntax = "proto3";  
   
@@ -123,7 +118,7 @@ message Parm1Result {
   int32 z = 2;  
 }
 ```
-11. Поместить в файл Dockerfile следующий текст:
+5. Поместить в файл server.Dockerfile следующий текст:
 ```Dockerfile
 FROM golang:1.23  
   
@@ -146,7 +141,19 @@ RUN go build -o grpc_server .
 EXPOSE 50051  
 CMD ["./grpc_server"]
 ```
-13. Поместить в файл main.py следующий текст:
+6. Поместить в файл client.Dockerfile следующий текст:
+```Dockerfile
+FROM python:3.12  
+  
+WORKDIR /grpc-demo  
+COPY service.proto ./  
+RUN pip install grpcio grpcio-tools  
+RUN python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. --pyi_out=. service.proto  
+COPY client/main.py main.py  
+  
+ENTRYPOINT ["python", "main.py"]
+```
+7. Поместить в файл main.py следующий текст:
 ```python
 import asyncio  
 import os  
@@ -225,5 +232,6 @@ if __name__ == '__main__':
     print('Running async')  
     asyncio.run(arun())
 ```
-15. Выполнить команду `docker build -t grpc-server . && docker run -p 50051:50051 --name grpc-server grpc-server`
-16. Выполнить команду `docker build -t grpc-client . && docker run --name grpc-client grpc-client`
+8. Выполнить команду `docker build -t grpc-server . && docker run -p 50051:50051 --name grpc-server grpc-server`
+9. Получить IP-адрес контейнера с сервером: `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' grpc-server`
+10. Выполнить команду `docker build -t grpc-client . && docker run --name grpc-client grpc-client`
