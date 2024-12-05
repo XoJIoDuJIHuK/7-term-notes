@@ -116,6 +116,10 @@ message Parm1Result {
 	}
 	```
 	- Запустите сервер: `go build -o grpc_server . && ./grpc_server`
+	```
+	root@aleh:/home/aleh/grpc-server# go build -o grpc_server . && ./grpc_server
+	2024/12/05 13:48:42 Server is running on port :50051
+	```
 - Клиент
 	- Создайте папку для клиента: `mkdir grpc-client && cd grpc-client`
 	- Установите необходимые пакеты: `apt update && apt install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa && apt update && apt install -y python3.12 python3.12-venv && apt clean && rm -rf /var/lib/apt/lists/*`
@@ -201,3 +205,23 @@ message Parm1Result {
 	- Создайте виртуальное окружение и установите нужные пакеты: `python3.12 -m venv .venv && source .venv/bin/activate && pip install grpcio grpcio-tools`
 	- Создайте файлы-заглушки: `python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. --pyi_out=. service.proto`
 	- Запустите клиент: `python main.py`
+	```
+	(.venv) root@aleh:/home/aleh/grpc-client# python main.py
+	Running sync
+	10 + 5 = 15
+	10 - 5 = 5
+	10 * 5 = 50
+	10 / 5 = 2
+	Pow 3 ^ 2 = 9
+	Timeout example
+	StatusCode.DEADLINE_EXCEEDED: Deadline Exceeded
+	Running async
+	45 + 5 = 50
+	12 - 5 = 7
+	5 * 5 = 25
+	76 / 5 = 15
+	12 ^ 2 = 144
+	AIO RPC ERROR: division by zero
+	Cancellation example
+	Locally cancelled by application!
+	```
