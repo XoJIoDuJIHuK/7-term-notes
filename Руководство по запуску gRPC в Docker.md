@@ -166,11 +166,12 @@ import service_pb2
 import service_pb2_grpc  
   
   
-server_address = os.environ.get('GRPC_SERVER_ADDRESS', 'localhost:50051')  
+server_host = os.environ.get('GRPC_SERVER_HOST', 'localhost')  
+server_port = os.environ.get('GRPC_SERVER_PORT', '50051')  
   
   
 def run():  
-    with grpc.insecure_channel(server_address) as channel:  
+    with grpc.insecure_channel(f'{server_host}:{server_port}') as channel:  
         stub = service_pb2_grpc.GreeterStub(channel)  
         response = stub.Add(service_pb2.Parm2Request(x=10, y=5))  
         print(f"{response.x} + {response.y} = {response.z}")  
@@ -196,7 +197,7 @@ def run():
   
   
 async def arun():  
-    async with grpc.aio.insecure_channel(server_address) as channel:  
+    async with grpc.aio.insecure_channel(f'{server_host}:{server_port}') as channel:  
         stub = service_pb2_grpc.GreeterStub(channel)  
         response = await stub.Add(service_pb2.Parm2Request(x=45, y=5))  
         print(f"{response.x} + {response.y} = {response.z}")  
@@ -232,6 +233,5 @@ if __name__ == '__main__':
     print('Running async')  
     asyncio.run(arun())
 ```
-8. Выполнить команду `docker build -t grpc-server . && docker run -p 50051:50051 --name grpc-server grpc-server`
-9. Получить IP-адрес контейнера с сервером: `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' grpc-server`
-10. Выполнить команду `docker build -t grpc-client . && docker run --name grpc-client grpc-client`
+8. Выполнить команду `docker build -f server.Dockerfile -t grpc-server . && docker run -p 50051:50051 --name grpc-server grpc-server`
+9. Выполнить команду `docker build -f client.Dockerfile -t grpc-client . && docker run --name grpc-client -e GRPC_SERVER_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' grpc-server) grpc-client`
