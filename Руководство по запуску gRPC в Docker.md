@@ -1,9 +1,6 @@
 1. Установить Docker на компьютер
     1. [Для Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
     2. [Для Ubuntu](https://docs.docker.com/engine/install/)
-2. Установить Python 3.12 на компьютер
-	1. [Для Windows](https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe)
-	2. Для Ubuntu: `sudo add-apt-repository ppa:deadsnakes/ppa -y && sudo apt update && sudo apt install python3.12 -y`
 3. Создать на компьютере папку проекта со следующими файлами:
 ```
 client/
