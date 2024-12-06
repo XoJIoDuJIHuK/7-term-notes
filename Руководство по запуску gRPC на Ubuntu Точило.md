@@ -227,3 +227,4 @@ message Parm1Result {
 	Cancellation example
 	Locally cancelled by application!
 	```
+- Руководство проверено для Ubuntu Server 24.04
