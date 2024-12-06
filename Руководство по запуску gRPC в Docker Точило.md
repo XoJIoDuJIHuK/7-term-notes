@@ -235,3 +235,4 @@ if __name__ == '__main__':
 ```
 8. Выполнить команду `docker build -f server.Dockerfile -t grpc-server . && docker run -p 50051:50051 --name grpc-server grpc-server`
 9. Выполнить команду `docker build -f client.Dockerfile -t grpc-client . && docker run --name grpc-client -e GRPC_SERVER_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' grpc-server) grpc-client`
+- Руководство проверено для Docker version 27.3.1, build ce12230
